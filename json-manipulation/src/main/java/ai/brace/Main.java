@@ -1,9 +1,8 @@
 package ai.brace;
 
-import ai.brace.model.Book;
-import ai.brace.model.Text;
-import ai.brace.model.TextComparator;
+import ai.brace.model.*;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 
 import java.io.*;
@@ -19,8 +18,8 @@ public class Main
 {
     public static void main(String[] args) throws UnsupportedEncodingException {
         TextComparator c = new TextComparator();
-//        System.out.println("==== task 1 =====");
-//        task1("a1.json", c);
+        System.out.println("==== task 1 =====");
+        task1("a1.json", c);
         System.out.println("==== task 2 =====");
         task2("a1.json", "a2.json", c);
         System.out.println("==== task 3 =====");
@@ -35,7 +34,9 @@ public class Main
      * @throws UnsupportedEncodingException
      */
     private static Book getBook(String filename) throws UnsupportedEncodingException {
-        Gson gson = new Gson();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(LastModified.class, new LastModifiedDeserializer());
+        Gson gson = gsonBuilder.create();
         ClassLoader classLoader = Main.class.getClassLoader();
         InputStream is = classLoader.getResourceAsStream(filename);
         Reader reader = new InputStreamReader(is, "UTF-8");
@@ -117,5 +118,12 @@ public class Main
                 counter.put(match, c);
             }
         }
+    }
+
+    private static void task4(String book1Filename, String book2Filename) throws UnsupportedEncodingException {
+        Book book1 = getBook(book1Filename);
+        Book book2 = getBook(book2Filename);
+
+
     }
 }
