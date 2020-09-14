@@ -2,8 +2,10 @@ package ai.brace.model;
 
 import com.google.gson.annotations.JsonAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Book {
     private String version;
@@ -13,7 +15,8 @@ public class Book {
     /**
      * since we are reading in a long and writing a date/time in ISO format,
      * i decided to just create a new class and have custom serializer/deserializer just for
-     * this attribute/class.
+     * this attribute/class.  another approach is to create a custom serializer/deserializer
+     * for the Book class.
      */
     private LastModified lastModified;
 
@@ -22,6 +25,8 @@ public class Book {
     private String author;
 
     private String translator;
+
+    private String releaseDate;
 
     private String language;
 
@@ -41,23 +46,36 @@ public class Book {
         Book newer = null;
         Book older = null;
 
-//        if (book1.getLastModified() >= book2.getLastModified()) {
-//            newer = book1;
-//            older = book2;
-//        } else {
-//            newer = book2;
-//            older = book1;
-//        }
+        // find the newer/older book based on lastModified
+        if (book1.getLastModified().getLastModified() >= book2.getLastModified().getLastModified()) {
+            newer = book1;
+            older = book2;
+        } else {
+            newer = book2;
+            older = book1;
+        }
 
+        // set from newer.  and if the newer doesn't have it, set it from older
         setVersion(newer.getVersion() != null ? newer.getVersion() : older.getVersion());
         setUuid(UUID.randomUUID().toString().toLowerCase());
         setLastModified(newer.getLastModified());
         setTitle(newer.getTitle() != null ? newer.getTitle() : older.getTitle());
         setAuthor(newer.getAuthor() != null ? newer.getAuthor() : older.getAuthor());
         setTranslator(newer.getTranslator() != null ? newer.getTranslator() : older.getTranslator());
-        setLanguage(newer.getTranslator() != null ? newer.getTranslator() : older.getTranslator());
+        setReleaseDate(newer.getReleaseDate() != null ? newer.getReleaseDate() : older.getReleaseDate());
+        setLanguage(newer.getLanguage() != null ? newer.getLanguage() : older.getLanguage());
+        List<Text> texts = new ArrayList<>();
+        texts.addAll(book1.getTextArray());
+        texts.addAll(book2.getTextArray());
+        setTextArray(texts.stream().sorted(new TextComparator()).collect(Collectors.toList()));
+    }
 
-        // sort?
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
     }
 
     public String getVersion() {

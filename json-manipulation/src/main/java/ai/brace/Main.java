@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 public class Main
 {
-    public static void main(String[] args) throws UnsupportedEncodingException {
+    public static void main(String[] args) throws IOException {
         TextComparator c = new TextComparator();
         System.out.println("==== task 1 =====");
         task1("a1.json", c);
@@ -24,6 +24,8 @@ public class Main
         task2("a1.json", "a2.json", c);
         System.out.println("==== task 3 =====");
         task3("a1.json", "a2.json");
+        System.out.println("==== task 4 =====");
+        task4("a1.json", "a2.json");
     }
 
     /**
@@ -120,10 +122,15 @@ public class Main
         }
     }
 
-    private static void task4(String book1Filename, String book2Filename) throws UnsupportedEncodingException {
+    private static void task4(String book1Filename, String book2Filename) throws IOException {
         Book book1 = getBook(book1Filename);
         Book book2 = getBook(book2Filename);
-
-
+        Book merged = new Book(book1, book2);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(LastModified.class, new LastModifiedSerializer());
+        Gson gson = gsonBuilder.create();
+        Writer writer = new FileWriter("output.json");
+        gson.toJson(merged, writer);
+        writer.close();
     }
 }
