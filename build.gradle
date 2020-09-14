@@ -39,5 +39,6 @@ project(':mystery-duplicates') {
     }
 
     dependencies {
+        implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
     }
 }
